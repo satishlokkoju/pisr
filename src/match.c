@@ -5,6 +5,8 @@ Author: David Lowe
 match.c:
 This file contains a sample program to read images and keypoints, then
    draw lines connecting matched keypoints.
+
+Adapted by Mark Knichel, 2008.
 *************************************************************************/
 
 
@@ -23,6 +25,10 @@ void convertToKeyFile(char* imageFile, char* keyFile);
 
 int main (int argc, char **argv)
 {
+  if (argc != 3) {
+    fprintf(stderr, "Usage is: ./match keyFile inputFile\n");
+    return 0;
+  }
   char* key = argv[2];
   FILE* fp = fopen(argv[1], "r");
   char buf[100];

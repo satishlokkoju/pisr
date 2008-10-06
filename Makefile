@@ -24,6 +24,8 @@ CVLIBS = -I /usr/local/include/opencv -L /usr/local/lib -lm -lcv -lhighgui -lcva
 
 # ------------------------ Rules --------------------------------
 
+all: match createkeys clean
+
 match: ${OBJ}
 	${CC} -o bin/$@ ${CFLAGS} ${OBJ} ${LIBS}
 

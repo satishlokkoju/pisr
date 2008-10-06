@@ -7,8 +7,8 @@
  * Usage: ./createkeyfile file convertedFile
  * where file is created by doing a ls (or ls -R equivalent)
  * of the files you want to convert to key files and
- * convertedFile is a file containing the full paths
- * of all images that were successfully converted to key files.
+ * convertedFile is the file you want to contain the full paths
+ * of all the keys that were successfully created.
  *
  * @author Mark Knichel
  */
@@ -20,9 +20,18 @@
 #include <highgui.h>  
 using namespace std;
 
-void createKeyFile(string filename);
+void createKeyFile(string filename, int siftProgram);
+string removeFileExtension(string filename);
 
 int main(int argc, char** argv) {
+  int siftProgram = 0; 
+  if (argc != 3 && argc != 4) {
+    cout << "Usage is: ./createkeys inputFile outputFile" << endl;
+    return 0;
+  }
+  if (argc == 4) {
+    siftProgram = atoi(argv[3]);
+  }
   ifstream file1(argv[1]);
   ofstream file2(argv[2], ios_base::out | ios_base::trunc);
   string dir = "";
@@ -38,39 +47,54 @@ int main(int argc, char** argv) {
     }
     if(fn.find(".JPG") != -1) {
       cout << fn << endl;
-      file2 << fn << endl;
-      createKeyFile(fn);
+      string keyFilename = removeFileExtension(fn) + ".key";
+      file2 << keyFilename << endl;
+      createKeyFile(fn, siftProgram);
     }
   }
   file2.close();
   return 0;
 }
 
-void createKeyFile(string filename) {
+
+/**
+ * Removes the .xxx extension from the end of the filename.
+ * Assumes that there is always a .xxx extension at the end of the filename.
+ */
+string removeFileExtension(string filename) {
+  return filename.substr(0, filename.find_last_of("."));
+}
+
+
+/**
+ * Creates a key file from the given image using the correct SIFT program.
+ */
+void createKeyFile(string filename, int siftProgram) {
+  string baseFilename = removeFileExtension(filename);
+  string originalPgmFilename = baseFilename + ".pgm";
+  string newPgmFilename = baseFilename + "pgm.pgm";
+  string keyFilename = baseFilename + ".key";
+  string cmd("");
+
   IplImage* img;
-  char buf[100];
-  strcpy(buf, filename.c_str());
   img = cvLoadImage(filename.c_str(), 0);
-  char *ext = strrchr(buf, '.') + 1;
-  strcpy(ext, "pgm");
-  cout << img->width << endl;
   IplImage* newImg = cvCreateImage(cvSize(img->width / 4, img->height/4), 8, 1);
   cvResize(img, newImg, CV_INTER_AREA);
-  cvSaveImage(buf, newImg);
-  char outFile[200];
-  strcpy(outFile, filename.c_str());
-  ext = strrchr(outFile, '.');
-  strcpy(ext, "pgm.pgm");
-  char cmd[500];
-  sprintf(cmd, "pnmdepth 255 \"%s\" >\"%s\"", buf, outFile);
-  cout << cmd << endl;
-  system(cmd);
-  char keyFile[200];
-  strcpy(keyFile, filename.c_str());
-  ext = strrchr(keyFile, '.') + 1;
-  strcpy(ext, "key");
-  sprintf(cmd, "./sift <\"%s\" >\"%s\"", outFile, keyFile);
-  system(cmd);
-  sprintf(cmd, "rm \"%s\" \"%s\"", buf, outFile);
-  system(cmd);
+  cvSaveImage(originalPgmFilename.c_str(), newImg);
+
+  cmd = "pnmdepth 255 \"" + originalPgmFilename + "\" >\"" + newPgmFilename +"\"";
+  system(cmd.c_str());
+
+  // TODO(Mark): Make this able to accept different SIFT programs to generate keys.
+  switch (siftProgram) {
+  case 0:
+    cmd = "./bin/lowesift <\"" + newPgmFilename + "\" >\"" + keyFilename + "\"";
+    break;
+  case 1:
+    cmd = "./bin/siftpp \"" + newPgmFilename + "\" --output=\"" + keyFilename + "\"";
+    break;
+  }
+  system(cmd.c_str());
+  cmd = "rm \"" + originalPgmFilename + "\" \"" + newPgmFilename + "\"";
+  system(cmd.c_str());
 }
