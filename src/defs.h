@@ -1,3 +1,6 @@
+#ifndef __DEFS__
+#define __DEFS__
+
 /************************************************************************
 Demo software: Invariant keypoint matching.
 Author: David Lowe
@@ -58,3 +61,12 @@ void WritePGM(FILE *fp, Image image);
 void DrawLine(Image image, int r1, int c1, int r2, int c2);
 Keypoint ReadKeyFile(char *filename);
 Keypoint ReadKeys(FILE *fp);
+
+/* From common.cpp */
+// There is a weird behavior where it wouldn't accept these functions being
+// defined in common.h.  I guess this spot is okay.
+int FindMatches(Keypoint keys1, Keypoint keys2);
+Keypoint CheckForMatch(Keypoint key, Keypoint klist);
+int DistSquared(Keypoint k1, Keypoint k2);
+
+#endif

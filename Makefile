@@ -15,7 +15,7 @@ CC = gcc
 # --------------------- Code modules ----------------------------
 
 # Object files
-OBJ = src/match.o src/util.o
+OBJ = src/match.o src/util.o src/common.o
 
 # Definitions
 DEFS = src/defs.h
@@ -24,13 +24,16 @@ CVLIBS = -I /usr/local/include/opencv -L /usr/local/lib -lm -lcv -lhighgui -lcva
 
 # ------------------------ Rules --------------------------------
 
-all: match createkeys clean
+all: match createkeys vocabtreematcher clean
 
 match: ${OBJ}
 	${CC} -o bin/$@ ${CFLAGS} ${OBJ} ${LIBS}
 
 createkeys: src/createkeys.cpp
 	g++ src/$@.cpp -o bin/$@ ${CFLAGS} ${CVLIBS}
+
+vocabtreematcher: src/vocabtreematcher.cpp
+	g++ -o bin/$@ ${CFLAGS} src/vocabtreematcher.cpp src/util.c src/vocsearch/ff_voctree.cpp src/vocsearch/ff_database.cpp src/vocsearch/ff_invfile.cpp src/common.c
 
 clean:
 	-rm src/*.o
