@@ -234,6 +234,7 @@ Keypoint ReadKeyFile(char *filename)
     return ReadKeys(file);
 }
 
+Keypoint ReadKeysNoDescriptionLength(FILE *fp);
 
 /* Read keypoints from the given file pointer and return the list of
    keypoints.  The file format starts with 2 integers giving the total
@@ -251,7 +252,7 @@ Keypoint ReadKeys(FILE *fp)
     Keypoint k, keys = NULL;
 
     if (fscanf(fp, "%d %d", &num, &len) != 2)
-	FatalError("Invalid keypoint file beginning.");
+      return ReadKeysNoDescriptionLength(fp);
 
     if (len != 128)
 	FatalError("Keypoint descriptor length invalid (should be 128).");
@@ -261,7 +262,7 @@ Keypoint ReadKeys(FILE *fp)
       k = (Keypoint) malloc(sizeof(struct KeypointSt));
       k->next = keys;
       keys = k;
-      k->descrip = malloc(len);
+      k->descrip = (unsigned char*)malloc(len);
 
       if (fscanf(fp, "%f %f %f %f", &(k->row), &(k->col), &(k->scale),
 		 &(k->ori)) != 4)
@@ -274,4 +275,33 @@ Keypoint ReadKeys(FILE *fp)
       }
     }
     return keys;
+}
+
+Keypoint ReadKeysNoDescriptionLength(FILE *fp)
+{
+  int j, len, val;
+  Keypoint k, keys = NULL;
+  len = 128;
+  int i = 0;
+  while (1)
+    {
+      /* Allocate memory for the keypoint. */
+      k = (Keypoint) malloc(sizeof(struct KeypointSt));
+      k->next = keys;
+      keys = k;
+      k->descrip = (unsigned char*)malloc(len);
+
+      if (fscanf(fp, "%f %f %f %f", &(k->row), &(k->col), &(k->scale),
+		 &(k->ori)) != 4) {
+	break;
+      }
+
+      for (j = 0; j < len; j++) {
+	if (fscanf(fp, "%d", &val) != 1 || val < 0 || val > 255)
+	  FatalError("Invalid keypoint file value.");
+	k->descrip[j] = (unsigned char) val;
+      }
+      i++;
+    }
+  return keys;
 }
