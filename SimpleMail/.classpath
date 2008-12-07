@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Users/janitor/Desktop/javamail-1_4_1/javamail-1.4.1/mail.jar"/>
+	<classpathentry kind="lib" path="C:/Users/janitor/Desktop/javamail-1_4_1/javamail-1.4.1/lib/dsn.jar"/>
+	<classpathentry kind="lib" path="C:/Users/janitor/Desktop/javamail-1_4_1/javamail-1.4.1/lib/imap.jar"/>
+	<classpathentry kind="lib" path="C:/Users/janitor/Desktop/javamail-1_4_1/javamail-1.4.1/lib/mailapi.jar"/>
+	<classpathentry kind="lib" path="C:/Users/janitor/Desktop/javamail-1_4_1/javamail-1.4.1/lib/pop3.jar"/>
+	<classpathentry kind="lib" path="C:/Users/janitor/Desktop/javamail-1_4_1/javamail-1.4.1/lib/smtp.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
