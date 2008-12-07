@@ -63,8 +63,23 @@ public class MailShow {
     static boolean saveAttachments = false;
     static int attnum = 1;
 
-    public static void main(String argv[]) {
-    	argv = new String [] {"-D", "-T", "pop3s", "-H", "pop.gmail.com", "-U", "pisrmail", "-P", "markandmatt"};
+
+    public static void main(final String argv[]) 
+    	 throws java.io.IOException {
+        Timer timer = new Timer();
+    	timer.schedule(new TimerTask(){
+            public void run(){
+              System.out.println("This line is printed repeatedly.");
+              go();
+            }
+          },1000, 30000);
+    	    	 
+    	   }
+    
+    
+    public static void go(){
+
+    String [] argv = new String [] {"-D", "-T", "pop3s", "-H", "pop.gmail.com", "-U", "pisrmail", "-P", "markandmatt"};
     	
 	int msgnum = -1;
 	int optind;
@@ -107,7 +122,7 @@ public class MailShow {
 "\t[-P password] [-f mailbox] [msgnum] [-v] [-D] [-s] [-S] [-a]");
 		System.out.println(
 "or     msgshow -m [-v] [-D] [-s] [-S] [-f msg-file]");
-		System.exit(1);
+		//System.exit(1);
 	    } else {
 		break;
 	    }
@@ -132,7 +147,7 @@ public class MailShow {
 		else
 		    msg = new MimeMessage(session, msgStream);
 		dumpPart(msg);
-		System.exit(0);
+		//System.exit(0);
 	    }
 
 	    // Get a Store object
@@ -172,7 +187,7 @@ public class MailShow {
 	    Folder folder = store.getDefaultFolder();
 	    if (folder == null) {
 	        System.out.println("No default folder");
-	        System.exit(1);
+	        //System.exit(1);
 	    }
 
 	    if (mbox == null)
@@ -180,7 +195,7 @@ public class MailShow {
 	    folder = folder.getFolder(mbox);
 	    if (folder == null) {
 	        System.out.println("Invalid folder");
-	        System.exit(1);
+	        //System.exit(1);
 	    }
 
 	    // try to open read/write and if that fails try read-only
@@ -195,7 +210,7 @@ public class MailShow {
 		System.out.println("Empty folder");
 		folder.close(false);
 		store.close();
-		System.exit(1);
+		//System.exit(1);
 	    }
 
 	    if (verbose) {
@@ -240,9 +255,9 @@ public class MailShow {
 	} catch (Exception ex) {
 	    System.out.println("Oops, got exception! " + ex.getMessage());
 	    ex.printStackTrace();
-	    System.exit(1);
+	    //System.exit(1);
 	}
-	System.exit(0);
+	//System.exit(0);
     }
 
     public static void dumpPart(Part p) throws Exception {
