@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
       dir.at(f.length() - 1) = '/';
       continue;
     }
-    if(fn.find(".JPG") != string::npos) {
+    if(fn.find(".JPG") != string::npos || fn.find(".jpg") != string::npos) {
       cout << fn << endl;
       string keyFilename = removeFileExtension(fn) + ".key";
       file2 << keyFilename << endl;

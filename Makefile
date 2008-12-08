@@ -10,33 +10,51 @@ LIBS = -lm
 #   -O for optimization
 CFLAGS = -Wall -g
 
-CC = gcc
+CC = g++
 
 # --------------------- Code modules ----------------------------
 
 # Object files
-OBJ = src/match.o src/util.o src/common.o
+OBJ = util.o common.o
 
 # Definitions
 DEFS = src/defs.h
 
-CVLIBS = -I /usr/local/include/opencv -L /usr/local/lib -lm -lcv -lhighgui -lcvaux
+CVLIBS = -I /usr/local/include/opencv -L /usr/local/lib -lm -lcv -lhighgui -lcvaux -lml
 
 # ------------------------ Rules --------------------------------
 
-all: match createkeys vocabtreematcher clean
+all: match opencv createColorHists createEdgeVectors createkeys vocabtreematcher clean
 
-match: ${OBJ}
-	${CC} -o bin/$@ ${CFLAGS} ${OBJ} ${LIBS}
+match: util.o common.o match.o
+	${CC} -o bin/$@ ${CFLAGS} match.o ${OBJ} ${LIBS} ${CVLIBS}
+
+opencv: src/opencv.cpp
+	g++ src/$@.cpp -o bin/$@ ${OBJ} ${CFLAGS} ${CVLIBS}
+
+createColorHists: src/createColorHists.cpp
+	g++ src/$@.cpp -o bin/$@ ${OBJ} ${CFLAGS} ${CVLIBS}
+
+createEdgeVectors: src/createEdgeVectors.cpp
+	g++ src/$@.cpp -o bin/$@ ${OBJ} ${CFLAGS} ${CVLIBS}
 
 createkeys: src/createkeys.cpp
-	g++ src/$@.cpp -o bin/$@ ${CFLAGS} ${CVLIBS}
+	g++ src/$@.cpp -o bin/$@ ${OBJ} ${CFLAGS} ${CVLIBS}
 
 vocabtreematcher: src/vocabtreematcher.cpp
-	g++ -o bin/$@ ${CFLAGS} src/vocabtreematcher.cpp src/util.c src/vocsearch/ff_voctree.cpp src/vocsearch/ff_database.cpp src/vocsearch/ff_invfile.cpp src/common.c
+	g++ -o bin/$@ ${CFLAGS} ${OBJ} ${CVLIBS} src/vocabtreematcher.cpp src/vocsearch/ff_voctree.cpp src/vocsearch/ff_database.cpp src/vocsearch/ff_invfile.cpp
+
+tmp: src/tmp.cpp util.o common.o match.o
+	g++ ${OBJ} ${CFLAGS} ${CVLIBS} src/tmp.cpp
 
 clean:
-	-rm src/*.o
+	-rm *.o
 
-# Implicit rule used by Gnu Make: $(CC) -c $(CPPFLAGS) $(CFLAGS)
-${OBJ}: ${DEFS}
+common.o: src/common.cpp src/defs.h
+	g++ -c src/common.cpp ${CFLAGS} ${CVLIBS}
+
+match.o: src/match.c src/defs.h
+	g++ -c src/match.c ${CFLAGS} ${CVLIBS}
+
+util.o: src/util.c src/defs.h
+	g++ -c src/util.c ${CFLAGS} ${CVLIBS}

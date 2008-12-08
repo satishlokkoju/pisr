@@ -16,6 +16,16 @@ This file contains the headers for a sample program to read images and
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <string>
+#include <iostream>
+#include <cv.h>
+#include <cvaux.h>
+#include <ml.h>
+#include <highgui.h>
+#include <math.h>
+#include <map>
+#include <algorithm>
+using namespace std;
 
 /*------------------------------ Macros  ---------------------------------*/
 
@@ -68,5 +78,9 @@ Keypoint ReadKeys(FILE *fp);
 int FindMatches(Keypoint keys1, Keypoint keys2);
 Keypoint CheckForMatch(Keypoint key, Keypoint klist);
 int DistSquared(Keypoint k1, Keypoint k2);
+int calcLineVector(string img_name, float vec[]);
+int colorHistVector(string img_name, float vec[]);
+void removeSky(IplImage* src);
+void debug(string dbg);
 
 #endif

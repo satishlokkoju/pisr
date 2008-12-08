@@ -91,10 +91,10 @@ int main(int argc, char **argv) {
     for (int j = 0; j < 10; j++) {
       cout << (j+1) << ": " << filenames[qdocnames[j]] << " Score: " <<
           qscores[j] << endl;
-      string f = filenames[qdocnames[j]];
-      char f2[f.size()+1];
-      strcpy(f2, f.c_str());
-      comboMatcher(buf, f2);
+      //string f = filenames[qdocnames[j]];
+      //char f2[f.size()+1];
+      //strcpy(f2, f.c_str());
+      //comboMatcher(buf, f2);
     }
   }
 
