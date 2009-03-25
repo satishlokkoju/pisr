@@ -52,11 +52,11 @@ public class SendMail
 	}
 	
 	
-	public static void main(String args[]) throws Exception
+	/*public static void main(String args[]) throws Exception
 	{
 		SendMail mailutils = new SendMail();
 		mailutils.sendMail("test", "test", "pisrmail@gmail.com", "5132890042@vtext.com");
 		
-	}
+	}*/
 	
 }
