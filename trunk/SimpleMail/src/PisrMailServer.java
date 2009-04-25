@@ -262,9 +262,9 @@ public class PisrMailServer {
 	Iterator<PisrTask> iter = workQ.iterator();
 	
 	while(iter.hasNext()){
-		PisrTask pt = iter.next();
-		
-		String ceResult = CommandExecution.launchCE("Pisr " + pt.getFile());
+		PisrTask pt = iter.next();	
+		//String ceResult = CommandExecution.launchCE("Pisr " + pt.getFile());
+		String ceResult = CommandExecution.launchOpenCV(pt.getFile());
 		pt.setResult(ceResult);
 	}
 	
