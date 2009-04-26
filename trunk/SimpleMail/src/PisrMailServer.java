@@ -67,8 +67,10 @@ public class PisrMailServer {
 	 throws java.io.IOException {
     	noCV = false;
     	if (argv.length > 0)
-    		if (argv[0].equals("N"))
+    		if (argv[0].equals("N")){
     			noCV = true;
+    			System.out.println("No OpenCV being called");
+    		}
    Timer timer = new Timer();
 	timer.schedule(new TimerTask(){
        public void run(){
@@ -194,7 +196,8 @@ public class PisrMailServer {
 	    Folder folder = store.getDefaultFolder();
 	    if (folder == null) {
 		System.out.println("No default folder");
-		System.exit(1);
+		//System.exit(1);
+		return;
 	    }
 
 	    if (mbox == null)
@@ -202,7 +205,8 @@ public class PisrMailServer {
 	    folder = folder.getFolder(mbox);
 	    if (folder == null) {
 		System.out.println("Invalid folder");
-		System.exit(1);
+		//System.exit(1);
+		return;
 	    }
 
 	    // try to open read/write and if that fails try read-only
@@ -217,7 +221,8 @@ public class PisrMailServer {
 		System.out.println("Empty folder");
 		folder.close(false);
 		store.close();
-		System.exit(1);
+		//System.exit(1);
+		return;
 	    }
 
 	    if (verbose) {
@@ -261,7 +266,8 @@ public class PisrMailServer {
 	} catch (Exception ex) {
 	    System.out.println("Oops, got exception! " + ex.getMessage());
 	    ex.printStackTrace();
-	    System.exit(1);
+	    //System.exit(1);
+	    return;
 	}
 	//Send queue to Mark's processing program
 	
