@@ -286,7 +286,7 @@ public class PisrMailServer {
 		SendMail mailutils = new SendMail();
 		while(iter.hasNext()){
 		PisrTask pt = iter.next();
-		mailutils.sendMail("PisrResp", pt.getResult(), "pisrmail@gmail.com", pt.getEmail());
+		mailutils.sendMail("PisrResponse", pt.getResult(), "pisrmail@gmail.com", pt.getEmail());
 		}
 	}
 	
