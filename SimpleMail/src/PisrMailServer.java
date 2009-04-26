@@ -61,17 +61,22 @@ public class PisrMailServer {
     static boolean saveAttachments = true;
     static int attnum = 1;
     static ArrayList<PisrTask> workQ;
+    public static boolean noCV;
     
-
     public static void main(final String argv[]) 
 	 throws java.io.IOException {
+    	noCV = false;
+    	if (argv.length > 0)
+    		if (argv[0].equals("N"))
+    			noCV = true;
    Timer timer = new Timer();
 	timer.schedule(new TimerTask(){
        public void run(){
          System.out.println("This line is printed repeatedly.");
          go();
+         System.out.println("Waiting...");
        }
-     },1000, 30000);
+     },1000, 120000);
 	    	 
 	   }
     
@@ -148,7 +153,8 @@ public class PisrMailServer {
 		else
 		    msg = new MimeMessage(session, msgStream);
 		dumpPart(msg);
-		System.exit(0);
+		//System.exit(0);
+		return;
 	    }
 
 	    // Get a Store object
@@ -264,8 +270,13 @@ public class PisrMailServer {
 	while(iter.hasNext()){
 		PisrTask pt = iter.next();	
 		//String ceResult = CommandExecution.launchCE("Pisr " + pt.getFile());
-		String ceResult = CommandExecution.launchOpenCV(pt.getFile());
-		//String ceResult = pt.getFile();
+		String ceResult;
+		if (noCV == true){
+			ceResult = pt.getFile();
+		}
+		else{
+			ceResult = CommandExecution.launchOpenCV(pt.getFile());
+		}
 		pt.setResult(ceResult);
 	}
 	
@@ -284,7 +295,8 @@ public class PisrMailServer {
 		System.out.println(e);
 	}
 	//Finished
-	System.exit(0);
+	//System.exit(0);
+	return;
     }
 
     public static void dumpPart(Part p) throws Exception {
@@ -395,6 +407,7 @@ public class PisrMailServer {
     }
 
     public static void dumpEnvelope(Message m) throws Exception {
+
 	pr("This is the message envelope");
 	pr("---------------------------");
 	Address[] a;
@@ -437,25 +450,13 @@ public class PisrMailServer {
 	pr("SendDate: " +
 	    (d != null ? d.toString() : "UNKNOWN"));
 	
-	// CONTENT
-	MimeMessage mm = (MimeMessage) m;
-	
-	pr("CONTENT: " + mm.getContentType());
-	
-	MimeMultipart mmp = (MimeMultipart) mm.getContent();
-	
-	String filename = (System.currentTimeMillis() + ".jpg");
-	File filey = new File(filename);
-	workQ.add(new PisrTask(filename, respond, ""));
-	if(filey.exists())
-		throw new IOException("file exists");
-	((MimeBodyPart)mmp.getBodyPart(1)).saveFile(filey);
+
 	
 	// FLAGS
 	Flags flags = m.getFlags();
 	StringBuffer sb = new StringBuffer();
 	Flags.Flag[] sf = flags.getSystemFlags(); // get the system flags
-
+	boolean hasBeenSeen = false;
 	boolean first = true;
 	for (int i = 0; i < sf.length; i++) {
 	    String s;
@@ -470,8 +471,10 @@ public class PisrMailServer {
 		s = "\\Flagged";
 	    else if (f == Flags.Flag.RECENT)
 		s = "\\Recent";
-	    else if (f == Flags.Flag.SEEN)
+	    else if (f == Flags.Flag.SEEN){
+	    	hasBeenSeen = true;
 		s = "\\Seen";
+	    }
 	    else
 		continue;	// skip it
 	    if (first)
@@ -490,7 +493,21 @@ public class PisrMailServer {
 	    sb.append(uf[i]);
 	}
 	pr("FLAGS: " + sb.toString());
-
+	
+	if(hasBeenSeen == false){
+	
+	// CONTENT
+	MimeMessage mm = (MimeMessage) m;
+	pr("CONTENT: " + mm.getContentType());
+	MimeMultipart mmp = (MimeMultipart) mm.getContent();
+	String filename = (System.currentTimeMillis() + ".jpg");
+	File filey = new File(filename);
+	if(hasBeenSeen == false)
+	workQ.add(new PisrTask(filename, respond, ""));
+	if(filey.exists())
+		throw new IOException("file exists");
+	((MimeBodyPart)mmp.getBodyPart(1)).saveFile(filey);
+	}
 	// X-MAILER
 	String[] hdrs = m.getHeader("X-Mailer");
 	if (hdrs != null)
