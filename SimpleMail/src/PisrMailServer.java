@@ -265,6 +265,7 @@ public class PisrMailServer {
 		PisrTask pt = iter.next();	
 		//String ceResult = CommandExecution.launchCE("Pisr " + pt.getFile());
 		String ceResult = CommandExecution.launchOpenCV(pt.getFile());
+		//String ceResult = pt.getFile();
 		pt.setResult(ceResult);
 	}
 	
@@ -443,7 +444,7 @@ public class PisrMailServer {
 	
 	MimeMultipart mmp = (MimeMultipart) mm.getContent();
 	
-	String filename = ("attachment sample " + System.currentTimeMillis() + ".jpg");
+	String filename = (System.currentTimeMillis() + ".jpg");
 	File filey = new File(filename);
 	workQ.add(new PisrTask(filename, respond, ""));
 	if(filey.exists())
