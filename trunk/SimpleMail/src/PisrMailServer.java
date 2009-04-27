@@ -505,6 +505,8 @@ public class PisrMailServer {
 	// CONTENT
 	MimeMessage mm = (MimeMessage) m;
 	pr("CONTENT: " + mm.getContentType());
+	 if (m.isMimeType("text/*") == false)
+	 {
 	MimeMultipart mmp = (MimeMultipart) mm.getContent();
 	String filename = (System.currentTimeMillis() + ".jpg");
 	File filey = new File(filename);
@@ -513,6 +515,7 @@ public class PisrMailServer {
 	if(filey.exists())
 		throw new IOException("file exists");
 	((MimeBodyPart)mmp.getBodyPart(1)).saveFile(filey);
+	}
 	}
 	// X-MAILER
 	String[] hdrs = m.getHeader("X-Mailer");
