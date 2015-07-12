@@ -1,0 +1,1 @@
+Search for building names in Philadelphia given an image.
